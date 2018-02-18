@@ -1,7 +1,7 @@
 import re
 
 
-def exceptions_before(word, notneed, ext, need):
+def exceptions_before(word, notneed, ext, need): #чернее только vantablack
     l = len(word)-2
     word = list(word)
     while l > 0:
@@ -12,7 +12,7 @@ def exceptions_before(word, notneed, ext, need):
     word = ''.join(word)
     return word
 
-def word_begin(word):
+def word_begin(word): #начала слов
     if word.startswith('th'):
         word = re.sub('th', 'd', word)
     elif word.startswith('hl'):
@@ -33,7 +33,7 @@ def word_begin(word):
         return word
     return word
 
-def word_any(word):
+def word_any(word): #любая позиция
     word = re.sub('dh', 'd', word)
     word = re.sub('ð', 'd', word)
     word = re.sub('gh', 'g', word)
@@ -68,7 +68,5 @@ for word in words:
     word = word_work(word)
     
     if word != w:
-        print (w + ' -> ' + word)
-        
-
-
+        print (w + ' -> ' + word) #здесь должен быть словарь
+ 
