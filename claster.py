@@ -11,26 +11,36 @@ def lists():
     cons = list(cons)
     return
 
+
 def word_begin(word):
     if word.startswith('th'):
-        word = re.sub('th', 'd', word)
+        word = re.sub('^th', 'd', word)
     elif word.startswith('hl'):
-        word = re.sub('hl', 'l', word)
+        word = re.sub('^hl', 'l', word)
     elif word.startswith('hn'):
-        word = re.sub('hn', 'n', word)
+        word = re.sub('^hn', 'n', word)
     elif word.startswith('hr'):
-        word = re.sub('hr', 'r', word)
-    elif word.startswith('ch') and word[2]=='i':
-        word = re.sub('ch', 'g', word)
-        
+        word = re.sub('^hr', 'r', word)
+    elif word.startswith('ch') and word[2] == 'i':
+        word = re.sub('^ch', 'g', word)
+
         """
         chind => kind
         """
     elif word.startswith('hu') and word[2] in vow:
-        word = re.sub('hu', 'w', word)
+        word = re.sub('^hu', 'w', word)
+    elif word.startswith('z'):
+        word = re.sub('^z', 'z', word)
+    elif word.startswith('ch'):
+        word = re.sub('^ch', 'k', word)
+    elif word.startswith('kh'):
+        word = re.sub('^kh', 'k', word)
+    elif word.startswith('h'):
+        word = re.sub(r"h(?=("+'|'.join(vow)+r"))", "h", word)
     else:
         return word
     return word
+
 
 def word_any(word):
     word = re.sub('dh', 'd', word)
@@ -47,33 +57,52 @@ def word_any(word):
     word = re.sub('c(?!h|e|i)', 'k', word)
     return word
 
+
 def word_vowel(word):
     word = re.sub(r"(?<=("+'|'.join(vow)+r"))zss", "ȥȥ", word)
-    word = re.sub(r"(?<=("+'|'.join(vow)+r"))c(?=e|i)", "z", word) #что-то не так
-    #word = re.sub(r"(?<=("+'|'.join(vow)"))c(?!("+'|'.join(cons)+r"))", "z", word) #что-то не так
+    word = re.sub(r"(?<=("+'|'.join(vow)+r"))c(?=e|i)", "z", word)  # что-то не так
+    # word = re.sub(r"(?<=("+'|'.join(vow)"))c(?!("+'|'.join(cons)+r"))", "z", word) # что-то не так
     word = re.sub(r"(?<=("+'|'.join(vow)+r"))zss^\\b", "ȥȥ", word)
     word = re.sub(r"(?<=("+'|'.join(vow)+r"))zss\\b", "ȥ", word)
     return word
-    
-#def word_consonant(word):
+
+
+def word_consonant(word):
+    word = re.sub(r"(?<=("+'|'.join(cons)+r"))zz", "z", word)
+    word = re.sub('(?<=l|r)ph', 'f', word)
+    if 'cch' and 'kch' and 'sch' not in word:
+        word = re.sub(r"(?<=("+'|'.join(cons)+r"))ch", "k", word)
+    if 'skh' not in word:
+        word = re.sub(r"(?<=("+'|'.join(cons)+r"))kh", "k", word)
+    return word
+
+
+def word_intervoc(word):
+     # word = re.sub(r"(?<=("+'|'.join(vow)"))zc(?!("+'|'.join(voc)+r"))", "ȥȥ", word) # что-то не так
+     # word = re.sub(r"(?<=("+'|'.join(vow)"))h(?!("+'|'.join(voc)+r"))", hȥ", word) # что-то не так
+     return word
+
 
 def word_work(word):
     word = word_begin(word)
     word = word_any(word)
+    word = word_vowel(word)
+    word = word_consonant(word)
+    word = word_intervoc(word)
     return(word)
 
-df = open("C:\\Users\\1\\Desktop\\wordlist.txt", "r", encoding = "UTF-8")
+df = open("C:\\Users\\1\\Desktop\\wordlist.txt", "r", encoding="UTF-8")
 words = df.readlines()
-n=0
+n = 0
 lists()
 
 while n < len(words):
     words[n] = re.sub('\n', '', words[n])
-    n+=1
+    n += 1
 
 for word in words:
     w = word
     word = word_work(word)
-    
+
     if word != w:
         print (w + ' -> ' + word)
