@@ -60,8 +60,8 @@ def word_any(word):
 
 def word_vowel(word):
     word = re.sub(r"(?<=("+'|'.join(vow)+r"))zss", "ȥȥ", word)
-    word = re.sub(r"(?<=("+'|'.join(vow)+r"))c(?=e|i)", "z", word)  # что-то не так
-    # word = re.sub(r"(?<=("+'|'.join(vow)"))c(?!("+'|'.join(cons)+r"))", "z", word) # что-то не так
+    word = re.sub(r"(?<=("+'|'.join(vow)+r"))c(?=(e|i))", "z", word)
+    word = re.sub(r"(?<=("+'|'.join(vow)+r"))c(?!(" + '|'.join(cons) +r"))", "z", word) # РАБОТАЕТ
     word = re.sub(r"(?<=("+'|'.join(vow)+r"))zss^\\b", "ȥȥ", word)
     word = re.sub(r"(?<=("+'|'.join(vow)+r"))zss\\b", "ȥ", word)
     return word
@@ -78,9 +78,9 @@ def word_consonant(word):
 
 
 def word_intervoc(word):
-     # word = re.sub(r"(?<=("+'|'.join(vow)"))zc(?!("+'|'.join(voc)+r"))", "ȥȥ", word) # что-то не так
-     # word = re.sub(r"(?<=("+'|'.join(vow)"))h(?!("+'|'.join(voc)+r"))", hȥ", word) # что-то не так
-     return word
+    word = re.sub(r"(?<=("+'|'.join(vow)+r"))zc(?!(" + '|'.join(vow) +r"))", "ȥȥ", word)
+    word = re.sub(r"(?<=("+'|'.join(vow)+r"))h(?!(" + '|'.join(vow) +r"))", "hȥ", word)
+    return word
 
 
 def word_work(word):
@@ -103,6 +103,6 @@ while n < len(words):
 for word in words:
     w = word
     word = word_work(word)
-
+    k+=1
     if word != w:
         print (w + ' -> ' + word)
